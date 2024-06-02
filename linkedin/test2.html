@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afficher le contenu XML</title>
+    <style>
+        .input-box {
+            margin-bottom: 10px;
+        }
+        #drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: #ccc;
+            margin-top: 20px;
+        }
+        #drop-zone.dragover {
+            border-color: #000;
+            color: #000;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xml2js/0.4.23/xml2js.min.js"></script>
+</head>
+<body>
+    <div id="vous-section">
+        <h1>Afficher le contenu XML</h1>
+        <p>Glissez et déposez votre fichier XML ici ou cliquez pour sélectionner un fichier.</p>
+        
+        <div id="drop-zone">
+            Glissez et déposez votre fichier XML ici ou cliquez pour sélectionner un fichier.
+        </div>
+        <input type="file" id="file-input" style="display:none;" accept=".xml">
+
+        <button onclick="generateCV()">Générer le CV</button>
+
+        <div id="xml-output" style="margin-top: 20px;">
+            <!-- Le contenu XML apparaîtra ici -->
+            <p id="xml-success-message" style="color: green;font-weight: bold;"></p>
+        </div>
+    </div>
+
+    <script>
+        let xmlData = null;
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (event) => {
+            handleFiles(event.target.files);
+        });
+
+        dropZone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(event.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            const file = files[0];
+            if (file && file.type === 'text/xml') {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    xmlData = event.target.result;
+                    alert('Fichier XML téléchargé : ' + file.name);
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Veuillez déposer un fichier XML.');
+            }
+        }
+
+        function generateCV() {
+            if (!xmlData) {
+                alert('Veuillez d\'abord télécharger un fichier XML.');
+                return;
+            }
+
+            const parser = new xml2js.Parser();
+            parser.parseString(xmlData, function (err, result) {
+                if (err) {
+                    alert('Erreur lors du parsing du fichier XML.');
+                    return;
+                }
+
+                const profile = result.profile;
+                const nom = profile.nom[0];
+                const email = profile.email[0];
+                const telephone = profile.telephone[0];
+                const formations = profile.formations[0].formation.join('<br>');
+                const projets = profile.projets[0].projet.join('<br>');
+                const competences = profile.competences[0].competence.join(', ');
+                const experiences = profile.experiences[0].experience.join('<br>');
+
+                const htmlContent = `
+                    <h2>Profil de ${nom}</h2>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Téléphone:</strong> ${telephone}</p>
+                    <h3>Formations</h3>
+                    <p>${formations}</p>
+                    <h3>Projets</h3>
+                    <p>${projets}</p>
+                    <h3>Compétences</h3>
+                    <p>${competences}</p>
+                    <h3>Expériences</h3>
+                    <p>${experiences}</p>
+                `;
+
+                document.getElementById('xml-output').innerHTML = htmlContent;
+            });
+        }
+    </script>
+</body>
+</html>

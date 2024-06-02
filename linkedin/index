@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum vitæ</title>
+    <style>
+        .input-box {
+            margin-bottom: 10px;
+        }
+        .input-box label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-box input,
+        .input-box textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .input-box textarea {
+            resize: vertical;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="vous-section">
+        <h1>Curriculum vitæ</h1>
+        <p>Il s’agit d’une page où vous allez décrire votre profil. Vous allez mettre vos formations dans une chronologie : vos formations les plus récentes jusqu'à la formation la plus ancienne.</p>
+        <p>Vous pouvez mettre également vos projets à l’École ou dans l’entreprise ou à l’étranger (par exemple, vos projets Erasmus).</p>
+        <p>Vous pouvez mettre votre CV dans le cas où vous cherchez un job, un stage, ou un apprentissage dans l’entreprise.</p>
+        <p>Votre CV sera généré automatiquement quand un bouton dans cette page (par exemple, bouton « Générer mon CV ») est cliqué. Le système récupère vos données venant d’un fichier XML et génère un CV en version HTML ou PDF.</p>
+        
+        <div class="input-box">
+            <label for="nom">Nom Prénom</label>
+            <input type="text" id="nom">
+        </div>
+        <div class="input-box">
+            <label for="email">Email</label>
+            <input type="email" id="email">
+        </div>
+        <div class="input-box">
+            <label for="telephone">Téléphone</label>
+            <input type="text" id="telephone">
+        </div>
+        <div class="input-box">
+            <label for="formation">Formation(s)</label>
+            <textarea id="formation"></textarea>
+        </div>
+        <div class="input-box">
+            <label for="projet">Projet(s)</label>
+            <textarea id="projet"></textarea>
+        </div>
+
+        <button onclick="generateCV()">Générer mon CV</button>
+
+        <div id="cv-output" style="margin-top: 20px;">
+            <!-- Le CV généré apparaîtra ici -->
+        </div>
+    </div>
+
+    <script>
+        function generateCV() {
+            const nom = document.getElementById('nom').value;
+            const email = document.getElementById('email').value;
+            const telephone = document.getElementById('telephone').value;
+            const formation = document.getElementById('formation').value;
+            const projet = document.getElementById('projet').value;
+
+            const cvHtml = `
+                <h2>CV de ${nom}</h2>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Téléphone:</strong> ${telephone}</p>
+                <h3>Formations</h3>
+                <p>${formation.replace(/\n/g, '<br>')}</p>
+                <h3>Projets</h3>
+                <p>${projet.replace(/\n/g, '<br>')}</p>
+            `;
+
+            document.getElementById('cv-output').innerHTML = cvHtml;
+        }
+    </script>
+</body>
+</html>

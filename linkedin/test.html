@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vous</title>
+    <style>
+        .input-box {
+            margin-bottom: 10px;
+        }
+        .input-box label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-box input,
+        .input-box textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .input-box textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        #drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: #ccc;
+            margin-top: 20px;
+        }
+        #drop-zone.dragover {
+            border-color: #000;
+            color: #000;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xml2js/0.4.23/xml2js.min.js"></script>
+</head>
+<body>
+    <div id="vous-section">
+        <h1>Curriculum Vitae</h1>
+        <p>Il s’agit d’une page où vous allez décrire votre profil. Vous allez mettre vos formations dans une chronologie : vos formations les plus récentes jusqu'à la formation la plus ancienne.</p>
+        <p>Vous pouvez mettre également vos projets à l’École ou dans l’entreprise ou à l’étranger.</p>
+        <p>Vous pouvez mettre votre CV dans le cas où vous cherchez un job, un stage, ou un apprentissage dans l’entreprise.</p>
+        <p>Votre CV sera généré automatiquement quand un bouton dans cette page (par exemple, bouton « Générer mon CV ») est cliqué. Le système récupère vos données venant d’un fichier XML et génère un CV en version HTML ou PDF.</p>
+        
+
+        <button onclick="generateCV()">Générer mon CV</button>
+
+        <div id="drop-zone">
+            Glissez et déposez votre fichier XML ici ou cliquez pour sélectionner un fichier.
+        </div>
+        <input type="file" id="file-input" style="display:none;" accept=".xml">
+
+        <div id="cv-output" style="margin-top: 20px;">
+            <!-- Le CV généré apparaîtra ici -->
+        </div>
+    </div>
+
+    <script>
+        function generateCV() {
+            // Cette fonction pourrait générer le CV en utilisant les données du formulaire
+        }
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (event) => {
+            handleFiles(event.target.files);
+        });
+
+        dropZone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(event.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            const file = files[0];
+            if (file && file.type === 'text/xml') {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const xmlData = event.target.result;
+                    displayXmlContent(xmlData);
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Veuillez déposer un fichier XML.');
+            }
+        }
+
+        function displayXmlContent(xmlData) {
+            const parser = new xml2js.Parser();
+            parser.parseString(xmlData, function (err, result) {
+                if (err) {
+                    alert('Erreur lors du parsing du fichier XML.');
+                    return;
+                }
+
+                const profile = result.profile;
+                const nom = profile.nom ? profile.nom[0] : '';
+                const email = profile.email ? profile.email[0] : '';
+                const telephone = profile.telephone ? profile.telephone[0] : '';
+                const formations = profile.formations ? profile.formations[0].formation.join('<br>') : '';
+                const projets = profile.projets ? profile.projets[0].projet.join('<br>') : '';
+                const competences = profile.competences ? profile.competences[0].competence.join(', ') : '';
+                const experiences = profile.experiences ? profile.experiences[0].experience.join('<br>') : '';
+
+                const htmlContent = `
+                    <h2>Profil de ${nom}</h2>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Téléphone:</strong> ${telephone}</p>
+                    <h3>Formations</h3>
+                    <p>${formations}</p>
+                    <h3>Projets</h3>
+                    <p>${projets}</p>
+                    <h3>Compétences</h3>
+                    <p>${competences}</p>
+                    <h3>Expériences</h3>
+                    <p>${experiences}</p>
+                `;
+
+                document.getElementById('cv-output').innerHTML = htmlContent;
+            });
+        }
+    </script>
+</body>
+</html>
