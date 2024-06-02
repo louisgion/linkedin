@@ -1,0 +1,16 @@
+<profile>
+    <name>Louis Gion</name>
+    <email>louis.gion@edu.ece.fr</email>
+    <image>facies.jpg</image>
+    <phone>07 69 07 28 65</phone>
+    <education>
+        <degree>2ème année Prépa Intégrée, Baccalauréat, Cambridge English Certificat, Brevet des collèges</degree>
+        <university>ECE Paris</university>
+        <year>2024</year>
+    </education>
+    <project>
+        <title>Projet Erasmus</title>
+        <description>Participation à un programme d'aide aux plus démunis à Saint-Denis.</description>
+        <year>2022</year>
+    </project>
+</profile>

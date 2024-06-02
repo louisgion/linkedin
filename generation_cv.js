@@ -1,0 +1,60 @@
+
+var name, email, phone, degree, university, year, projectTitle, projectDescription, projectYear, image;
+
+        // Fonction pour charger et extraire les données du fichier XML
+        function loadAndExtractXML() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var xmlDoc = xhr.responseXML;
+                        // Extraction des données du fichier XML
+                        name = xmlDoc.querySelector("name").textContent;
+                        email = xmlDoc.querySelector("email").textContent;
+                        phone = xmlDoc.querySelector("phone").textContent;
+                        degree = xmlDoc.querySelector("education > degree").textContent;
+                        university = xmlDoc.querySelector("education > university").textContent;
+                        year = xmlDoc.querySelector("education > year").textContent;
+                        projectTitle = xmlDoc.querySelector("project > title").textContent;
+                        projectDescription = xmlDoc.querySelector("project > description").textContent;
+                        projectYear = xmlDoc.querySelector("project > year").textContent;
+                        image = xmlDoc.querySelector("image").textContent;
+                        // Affichage des données sur la page
+                        var profileDetails = document.getElementById("profile-details");
+                        profileDetails.innerHTML = `
+                            <h2>${name}</h2>
+                            <p><strong>Email:</strong> ${email}</p>
+                            <p><strong>Téléphone:</strong> ${phone}</p>
+                            <h3>Éducation</h3>
+                            <p>${degree} - ${university} (${year})</p>
+                            <h3>Projet</h3>
+                            <p><strong>${projectTitle}</strong> (${projectYear}) - ${projectDescription}</p>
+                        `;
+                    } else {
+                        console.error('Erreur de chargement du fichier XML');
+                    }
+                }
+            };
+            xhr.open("GET", "cv.xml", true);
+            xhr.send();
+        }
+
+        // Fonction pour générer le CV
+        function generateCV() {
+            var cvHtml = `
+                <div id='CV_display'>
+                <h2>CV de ${name}</h2>
+                <img src='${image}'/>
+                <strong>Email:</strong><a href='mailto:${email}'>${email}</a><br/>
+                <strong>Téléphone:</strong><p>${phone}</p><br/>
+                <strong>Éducation</strong><br/>
+                <p>${degree} - ${university} (${year})</p><br/>
+                <strong>Projet</strong><br/>
+                <strong>${projectTitle}</strong><p>(${projectYear}) - ${projectDescription}</p><br/>
+                </div>
+            `;
+            document.getElementById('cv-output').innerHTML = cvHtml;
+        }
+
+        // Appel de la fonction pour charger et extraire les données XML au chargement de la page
+        window.onload = loadAndExtractXML;
